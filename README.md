@@ -21,10 +21,10 @@ $(function() {
 ###### HTML
 ```html
 <div class='container' data-col='5' data-gut='15'>
-  <div class='item' ></div>
-  <div class='item' ></div>
-  <div class='item' ></div>
-  <div class='item' ></div>
+  <div class='item'></div>
+  <div class='item'></div>
+  <div class='item'></div>
+  <div class='item'></div>
 </div>
 ```
 
