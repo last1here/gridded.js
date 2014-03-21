@@ -23,7 +23,6 @@
 */
 !function ($) {
 	var gridded = function (element, options) {
-
 		this.element = element;
 		this.setOptions(options);
 		t = this;
