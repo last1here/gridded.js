@@ -4,10 +4,11 @@
 A simple jQuery tile based grid.
 
 
-## Example
+## Examples
 ### Simple
-This is the simpliest way to call Gridded, currently just creates a basic grid with each tile exactly the same size
+This is the simpliest way to call Gridded, currently just creates a basic grid with each tile exactly the same size.
 [Example](http://codepen.io/Last1Here/pen/fFJsk/)
+#### jQuery
 ```Javascript
 $(function() {
 	$('.container').gridded({
@@ -17,6 +18,7 @@ $(function() {
 	});
 });
 ```
+#### HTML
 ```html
 <div class='container' data-col='5' data-gut='15'>
   <div class='item' ></div>
@@ -28,11 +30,14 @@ $(function() {
 
 ### Simple V2
 This is also a simple way to call Gridded but you do have to manually enter the data values as shown below.
+[Example](http://codepen.io/Last1Here/pen/agpeF)
+#### jQuery
 ```Javascript
 $(function() {
 	$('.container').gridded();
 });
 ```
+#### HTML
 ```html
 <div class='container' data-col='5' data-gut='15'>
   <div class='item' data-pd='0' data-pr='0' data-w='1'></div>
@@ -52,7 +57,7 @@ $(function() {
 </div>
 ```
 
-[Example](http://codepen.io/Last1Here/pen/agpeF)
+
 
 ## Todo's
 
