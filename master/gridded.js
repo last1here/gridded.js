@@ -1,26 +1,12 @@
-/*
-*The MIT License (MIT)
-*
-*Copyright (c) 2014 - Ashley Burgess
-*
-*Permission is hereby granted, free of charge, to any person obtaining a copy
-*of this software and associated documentation files (the "Software"), to deal
-*in the Software without restriction, including without limitation the rights
-*to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-*copies of the Software, and to permit persons to whom the Software is
-*furnished to do so, subject to the following conditions:
-*
-*The above copyright notice and this permission notice shall be included in all
-*copies or substantial portions of the Software.
-*
-*THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-*IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-*FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-*AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-*LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-*OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-*SOFTWARE.
-*/
+/**
+ * Gridded
+ * A lightweight jQuery plugin create a tile based grid
+ * http://luis-almeida.github.com/unveil
+ *
+ * Licensed under the MIT license.
+ * Copyright 2013 Ashley Burgess
+ * https://github.com/last1here
+ */
 !function ($) {
 	var gridded = function (element, options) {
 
@@ -78,7 +64,7 @@
 		},	
 
 		setWidths: function () {
-			this.width = this.element.width() - this.gutter;
+			this.width = this.element.width() + this.gutter;
 			this.colWidth = this.width / this.col;
 			
 			if (this.autoSimple) 
@@ -97,10 +83,12 @@
 				i.width(i.data('w') * that.colWidth - that.gutter);
 				i.height(i.data('w') * that.colWidth - that.gutter);
 				
+				console.log(that.element.css("padding-left"));
+
 				if(i.data('pr') == 0)
-					i.css("left", that.gutter);
+					i.css("left", that.element.css("padding-left"));
 				else 
-					i.css("left", i.data('pr') * that.colWidth + that.gutter);
+					i.css("left", i.data('pr') * that.colWidth + parseInt(that.element.css("padding-left")));
 				
 				if(i.data('pd') == 0) 
 					i.css("top", that.gutter);
@@ -110,8 +98,6 @@
 				if(largestPushDown < (i.data('pd') + i.data('w'))) 
 					largestPushDown = Number(i.data('pd')) + Number(i.data('w'));
 			});
-
-			console.log(largestPushDown);
 
 			this.element.css("height", largestPushDown * this.colWidth + this.gutter);
 		},
@@ -132,9 +118,12 @@
 		},
 
 		advancedAutoPlot: function() {
-			var that = this, d = {}, pr = 0, pd = 0;
+			var that = this, pr = 0, pd = 0;
+
+			var d = [[1,2],[3,4],[5,6]];
+			console.log(d);
 			this.element.find('.' + this.items).each(function() {
-				var w = this.data('w');
+				var width = this.data('w');
 			});
 		}
 	};
