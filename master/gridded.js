@@ -1,7 +1,6 @@
 /**
  * Gridded
  * A lightweight jQuery plugin create a tile based grid
- * http://luis-almeida.github.com/unveil
  *
  * Licensed under the MIT license.
  * Copyright 2013 Ashley Burgess
@@ -68,7 +67,7 @@
 			this.colWidth = this.width / this.col;
 			
 			if (this.autoSimple) 
-				this.simpleAutoPlot();
+				this.autoPlot();
 
 			this.setItemWidths();
 		},
@@ -82,8 +81,6 @@
 				i.css("position", "absolute");
 				i.width(i.data('w') * that.colWidth - that.gutter);
 				i.height(i.data('w') * that.colWidth - that.gutter);
-				
-				console.log(that.element.css("padding-left"));
 
 				if(i.data('pr') == 0)
 					i.css("left", that.element.css("padding-left"));
@@ -117,15 +114,38 @@
 			});
 		},
 
-		advancedAutoPlot: function() {
-			var that = this, pr = 0, pd = 0;
+		autoPlot: function() {
+			var that = this, rn = 0, cn = 0;
 
-			var d = [[1,2],[3,4],[5,6]];
-			console.log(d);
+			var cols = [];
+			var row = 0;
+
+			for (var i = 0; i == this.col; i++) {
+				cols[i] = 1;
+			}
+
 			this.element.find('.' + this.items).each(function() {
-				var width = this.data('w');
+				var i = $(this);
+				if(i.data('w')) {
+					var width = i.data('w');
+				} else {
+					width = 1;
+					i.data('w', 1);
+				}
+
+				var lowest = {};
+				$.each(cols, function (key, value) {
+					if (lowest.value > value) {
+						lowest.value = value
+						lowest.key = key;
+					}
+				});
+
+				console.log(lowest); 
+
 			});
 		}
+
 	};
 	
 	// jQuery fn
