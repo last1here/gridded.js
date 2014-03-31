@@ -41,6 +41,7 @@
 			this.gutter = 10;
 			this.col = 5;
 			this.autoSimple = false;
+			this.items = 'item';
 			
 			if (typeof this.element.data('gut') == "number")
 				this.gutter = this.element.data('gut');
@@ -51,6 +52,9 @@
 			if (typeof this.element.data('auto') == "boolean")
 				this.autoSimple = this.element.data('auto');
 
+			if (typeof this.element.data('items') == "string")
+				this.items = this.element.data('items');
+
 			if (typeof options == 'object') {
 				if (typeof options.gutter == 'number')
 					this.gutter = options.gutter;
@@ -60,6 +64,9 @@
 
 				if (typeof options.auto == 'boolean')
 					this.autoSimple = options.auto;
+
+				if (typeof options.items == 'string')
+					this.items = options.items;
 			}
 
 			this.setWidths();
@@ -73,21 +80,23 @@
 		setWidths: function () {
 			this.width = this.element.width() - this.gutter;
 			this.colWidth = this.width / this.col;
-			if (this.autoSimple) {
+			
+			if (this.autoSimple) 
 				this.simpleAutoPlot();
-			} else {
-				
-			}
+
 			this.setItemWidths();
 		},
 
 		setItemWidths: function () {
 			var that = this;
 			largestPushDown = 0;
-			this.element.find('.item').each(function() {
+			this.element.css("position", "relative");
+			this.element.find('.' + this.items).each(function() {
 				var i = $(this);
+				i.css("position", "absolute");
 				i.width(i.data('w') * that.colWidth - that.gutter);
 				i.height(i.data('w') * that.colWidth - that.gutter);
+				
 				if(i.data('pr') == 0)
 					i.css("left", that.gutter);
 				else 
@@ -99,15 +108,17 @@
 					i.css( "top", i.data('pd') * that.colWidth + that.gutter);
 				
 				if(largestPushDown < (i.data('pd') + i.data('w'))) 
-					largestPushDown = i.data('pd') + i.data('w');
+					largestPushDown = Number(i.data('pd')) + Number(i.data('w'));
 			});
+
+			console.log(largestPushDown);
 
 			this.element.css("height", largestPushDown * this.colWidth + this.gutter);
 		},
 
 		simpleAutoPlot: function() {
 			var that = this, pr = 0, pd = 0;
-			this.element.find('.item').each(function() {
+			this.element.find('.' + this.items).each(function() {
 				var i = $(this);
 				i.data('w', '1');
 				i.data('pr', pr);
@@ -122,7 +133,7 @@
 
 		advancedAutoPlot: function() {
 			var that = this, d = {}, pr = 0, pd = 0;
-			this.element.find('.item').each(function() {
+			this.element.find('.' + this.items).each(function() {
 				var w = this.data('w');
 			});
 		}
