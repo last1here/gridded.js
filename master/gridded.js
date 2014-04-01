@@ -144,7 +144,7 @@
 						placed = true;
 					}
 				});
-				console.log(lowest.difference);
+				
 
 				// add to cols
 				for (c = 0; c <= width-1; c++) {
