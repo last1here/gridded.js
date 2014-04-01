@@ -18,16 +18,16 @@
 		});
 
 	};
-	
+
 	gridded.prototype = {
 		constructor: gridded,
-		
+
 		setOptions: function(options) {
 			this.gutter = 10;
 			this.col = 5;
 			this.autoSimple = false;
-			this.items = 'item';
-			
+			this.items = '.item';
+
 			if (typeof this.element.data('gut') == "number")
 				this.gutter = this.element.data('gut');
 
@@ -60,13 +60,13 @@
 		// todo add delay on resize
 		resized: function  () {
 			this.setWidths();
-		},	
+		},
 
 		setWidths: function () {
 			this.width = this.element.width() + this.gutter;
 			this.colWidth = this.width / this.col;
-			
-			if (this.autoSimple) 
+
+			if (this.autoSimple)
 				this.autoPlot();
 
 			this.setItemWidths();
@@ -76,7 +76,7 @@
 			var that = this;
 			largestPushDown = 0;
 			this.element.css("position", "relative");
-			this.element.find('.' + this.items).each(function() {
+			this.element.find(this.items).each(function() {
 				var i = $(this);
 				i.css("position", "absolute");
 				i.width(i.data('w') * that.colWidth - that.gutter);
@@ -84,15 +84,15 @@
 
 				if(i.data('pr') == 0)
 					i.css("left", that.element.css("padding-left"));
-				else 
+				else
 					i.css("left", i.data('pr') * that.colWidth + parseInt(that.element.css("padding-left")));
-				
-				if(i.data('pd') == 0) 
+
+				if(i.data('pd') == 0)
 					i.css("top", that.gutter);
-				else 
+				else
 					i.css( "top", i.data('pd') * that.colWidth + that.gutter);
-				
-				if(largestPushDown < (i.data('pd') + i.data('w'))) 
+
+				if(largestPushDown < (i.data('pd') + i.data('w')))
 					largestPushDown = Number(i.data('pd')) + Number(i.data('w'));
 			});
 
@@ -101,7 +101,7 @@
 
 		simpleAutoPlot: function() {
 			var that = this, pr = 0, pd = 0;
-			this.element.find('.' + this.items).each(function() {
+			this.element.find(this.items).each(function() {
 				var i = $(this);
 				i.data('w', '1');
 				i.data('pr', pr);
@@ -115,39 +115,66 @@
 		},
 
 		autoPlot: function() {
-			var that = this, rn = 0, cn = 0;
-
+			var that = this, rn = 0, cn = 0, ic = 1;
 			var cols = [];
 			var row = 0;
 
-			for (var i = 0; i == this.col; i++) {
-				cols[i] = 1;
+			for (var i = 0; i <= this.col - 1; i++) {
+				cols[i] = 0;
 			}
 
-			this.element.find('.' + this.items).each(function() {
+
+			this.element.find(this.items).each(function() {
 				var i = $(this);
-				if(i.data('w')) {
+				if (i.data('w')) {
 					var width = i.data('w');
 				} else {
 					width = 1;
 					i.data('w', 1);
 				}
 
-				var lowest = {};
+				var lowest = {}, placed = false;
+
 				$.each(cols, function (key, value) {
-					if (lowest.value > value) {
+
+					if ((lowest.value > value || lowest.value == null) && cols[key-1+width] <= value && key <= that.col - width) {
+
 						lowest.value = value
 						lowest.key = key;
+						placed = true;
 					}
 				});
+				console.log(lowest.difference);
 
-				console.log(lowest); 
+				// add to cols
+				for (c = 0; c <= width-1; c++) {
+					cols[lowest.key + c] += width;
+				}
 
+				/*var lowest = {};
+				var placed = false, c = 0;
+				while (placed != true) {
+					$.each(cols, function (key, value) {
+						if (lowest.value > value || lowest.value == null) {
+							lowest.value = value
+							lowest.key = key;
+						}
+					});
+
+				}*/
+
+				i.data('pr', lowest.key);
+				i.data('pd', lowest.value);
+				i.attr('pr', lowest.key);
+				i.attr('pd', lowest.value);
+
+				ic++;
 			});
+			console.log(cols);
 		}
 
 	};
-	
+
 	// jQuery fn
 	$.fn.gridded = function(options) {
 		var el = $(this);
