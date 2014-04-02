@@ -14,7 +14,7 @@
 
 		that = this;
 		$(window).on('resize',function () {
-			that.resized();
+			that.setWidths();
 		});
 
 	};
@@ -52,14 +52,13 @@
 			this.setWidths();
 		},
 
-		// todo add delay on resize
+		/* todo add delay on resize
 		resized: function  () {
 			this.setWidths();
-		},
+		},*/
 
 		setWidths: function () {
 			this.width = this.element.width() + this.gutter;
-			console.log( '1' +this.width);
 			this.colWidth = this.width / this.col;
 
 			this.placeItems();
@@ -78,12 +77,12 @@
 			}
 
 			this.element.css("position", "relative");
-			this.element.find(this.items).each(function() {
+			this.element.find(this.items).hide().each(function() {
 				var i = $(this), pos = {}, placed = false, row = 0;
 
-				if (!i.data('w')) 
+				if (!i.data('w'))
 					i.data('w', 1);
-				else if (i.data('w') > that.col) 
+				else if (i.data('w') > that.col)
 					i.data('w', that.col);
 
 				if (!i.data('h'))
@@ -103,6 +102,8 @@
 							} else {
 								empty = false;
 							}
+							if(empty == false)
+								break;
 						}
 
 						if(empty == true) {
@@ -112,24 +113,28 @@
 								}
 							}
 
+							var itemWidth = i.data('w') * that.colWidth - that.gutter;
+							itemWidth -=  parseInt(i.css("border-left-width")) + parseInt(i.css("border-right-width"));
+							itemWidth -=  parseInt(i.css("padding-left")) + parseInt(i.css("padding-right"));
+
+							var itemHeight = i.data('h') * that.colWidth - that.gutter;
+							itemHeight -= parseInt(i.css("border-top-width")) + parseInt(i.css("border-bottom-width"));
+							itemHeight -= parseInt(i.css("padding-top")) + parseInt(i.css("padding-bottom"));
+
 							i.data('pr', c);
 							i.data('pd', row);
 							i.data('data-ic', ic);
-
-							var itemWidth = i.data('w') * that.colWidth - that.gutter;
-							itemWidth = itemWidth - parseInt(i.css("border-left-width")) - parseInt(i.css("border-right-width"));
-							itemWidth = itemWidth - parseInt(i.css("padding-left")) - parseInt(i.css("padding-right"));
-
-							var itemHeight = i.data('h') * that.colWidth - that.gutter;
-							itemHeight = itemHeight - parseInt(i.css("border-top-width")) - parseInt(i.css("border-bottom-width"));
-							itemHeight = itemHeight - parseInt(i.css("padding-top")) - parseInt(i.css("padding-bottom"));
-
 							i.css("position", "absolute");
 							i.width(itemWidth);
 							i.height(itemHeight);
-
 							i.css("left", c * that.colWidth + parseInt(that.element.css("padding-left")));
 							i.css("top", row * that.colWidth + parseInt(that.element.css("padding-top")));
+
+							if (that.fadeIn)
+								i.delay(1000).fadeIn("slow");
+							else
+								i.show();
+
 							if(largestPushDown < (row + i.data('h')))
 								largestPushDown = row + Number(i.data('h'));
 
@@ -139,8 +144,6 @@
 					}
 					row += 1;
 				}
-
-
 
 				ic++;
 			});
