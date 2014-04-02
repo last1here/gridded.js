@@ -7,7 +7,7 @@ A simple jQuery tile based grid.
 ## Examples
 
 ### Simple
-This is a simple way to call Gridded where you can supply the width and height for the tiles.
+This is a simple way to call Gridded where you can supply the width and height for the tiles as data attributes.
 [Demo](http://codepen.io/Last1Here/pen/giaCq)
 
 ###### jQuery
