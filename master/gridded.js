@@ -11,10 +11,10 @@
 
 		this.element = element;
 		this.setOptions(options);
-		t = this;
 
+		that = this;
 		$(window).on('resize',function () {
-			t.resized();
+			that.resized();
 		});
 
 	};
@@ -25,8 +25,8 @@
 		setOptions: function(options) {
 			this.gutter = 10;
 			this.col = 5;
-			this.autoSimple = false;
 			this.items = '.item';
+			this.fadeIn = false;
 
 			if (typeof this.element.data('gut') == "number")
 				this.gutter = this.element.data('gut');
@@ -34,8 +34,6 @@
 			if (typeof this.element.data('col') == "number")
 				this.col = this.element.data('col');
 
-			if (typeof this.element.data('auto') == "boolean")
-				this.autoSimple = this.element.data('auto');
 
 			if (typeof this.element.data('items') == "string")
 				this.items = this.element.data('items');
@@ -46,9 +44,6 @@
 
 				if (typeof options.col == 'number')
 					this.col = options.col;
-
-				if (typeof options.auto == 'boolean')
-					this.autoSimple = options.auto;
 
 				if (typeof options.items == 'string')
 					this.items = options.items;
@@ -64,113 +59,110 @@
 
 		setWidths: function () {
 			this.width = this.element.width() + this.gutter;
+			console.log( '1' +this.width);
 			this.colWidth = this.width / this.col;
 
-			if (this.autoSimple)
-				this.autoPlot();
-
-			this.setItemWidths();
+			this.plotItems();
+			this.placeItems();
 		},
 
-		setItemWidths: function () {
+		placeItems: function () {
 			var that = this;
 			largestPushDown = 0;
 			this.element.css("position", "relative");
 			this.element.find(this.items).each(function() {
 				var i = $(this);
+				if (!i.data('w')) {
+					i.data('w', 1);
+				}
+
+				if (!i.data('h')) {
+					i.data('h', i.data('w'));
+				}
+
+				// calculate width
+				var itemWidth = i.data('w') * that.colWidth - that.gutter;
+				itemWidth = itemWidth - parseInt(i.css("border-left-width")) - parseInt(i.css("border-right-width"));
+				itemWidth = itemWidth - parseInt(i.css("padding-left")) - parseInt(i.css("padding-right"));
+
+				var itemHeight = i.data('w') * that.colWidth - that.gutter;
+				itemHeight = itemHeight - parseInt(i.css("border-top-width")) - parseInt(i.css("border-bottom-width"));
+				itemHeight = itemHeight - parseInt(i.css("padding-top")) - parseInt(i.css("padding-bottom"));
+
 				i.css("position", "absolute");
-				i.width(i.data('w') * that.colWidth - that.gutter);
-				i.height(i.data('w') * that.colWidth - that.gutter);
 
-				if(i.data('pr') == 0)
-					i.css("left", that.element.css("padding-left"));
-				else
-					i.css("left", i.data('pr') * that.colWidth + parseInt(that.element.css("padding-left")));
+				i.width(itemWidth);
+				i.height(itemHeight);
 
-				if(i.data('pd') == 0)
-					i.css("top", that.gutter);
-				else
-					i.css( "top", i.data('pd') * that.colWidth + that.gutter);
+				i.css("left", i.data('pr') * that.colWidth + parseInt(that.element.css("padding-left")));
+				i.css("top", i.data('pd') * that.colWidth + parseInt(that.element.css("padding-top")));
 
 				if(largestPushDown < (i.data('pd') + i.data('w')))
-					largestPushDown = Number(i.data('pd')) + Number(i.data('w'));
+					largestPushDown = Number(i.data('pd')) + Number(i.data('h'));
 			});
 
-			this.element.css("height", largestPushDown * this.colWidth + this.gutter);
+			this.element.css("height", largestPushDown * this.colWidth - this.gutter + parseInt(this.element.css('padding-top'))  + parseInt(this.element.css('padding-bottom')) );
 		},
 
-		simpleAutoPlot: function() {
-			var that = this, pr = 0, pd = 0;
-			this.element.find(this.items).each(function() {
-				var i = $(this);
-				i.data('w', '1');
-				i.data('pr', pr);
-				i.data('pd', pd);
-				pr++;
-				if(pr > that.col - 1) {
-					pr = 0;
-					pd++;
-				}
-			});
-		},
-
-		autoPlot: function() {
+		plotItems: function() {
 			var that = this, rn = 0, cn = 0, ic = 1;
-			var cols = [];
+			var grid = new Array([]);
 			var row = 0;
 
-			for (var i = 0; i <= this.col - 1; i++) {
-				cols[i] = 0;
+			// create grid
+			for (var cl = this.col - 1; cl >= 0; cl--) {
+				grid[cl] = new Array();
 			}
 
-
 			this.element.find(this.items).each(function() {
-				var i = $(this);
+				var i = $(this), width, push = {}, placed = false, r = 0;
 				if (i.data('w')) {
-					var width = i.data('w');
+					if (i.data('w') > that.col) {
+						i.data('w', that.col);
+					}
+					width = i.data('w');
 				} else {
 					width = 1;
 					i.data('w', 1);
 				}
 
-				var lowest = {}, placed = false;
+				while (placed == false) {
+					for (var c = 0; c <= that.col - 1 ; c++) {
+						var empty = true;
+						for (var w = 0; w <= width - 1 ; w++) {
+							pushCol = Number(c+w);
+							pushRow = Number(r+w);
 
-				$.each(cols, function (key, value) {
+							if (pushCol < that.col) {
+								if(grid[pushCol][r] != null && grid[c][pushRow] != null) {
+									empty = false;
+								}
+							} else {
+								empty = false;
+							}
+						}
 
-					if ((lowest.value > value || lowest.value == null) && cols[key-1+width] <= value && key <= that.col - width) {
-
-						lowest.value = value
-						lowest.key = key;
-						placed = true;
+						if(empty == true) {
+							push.col = c;
+							push.row = r;
+							for (var w = 0; w <= width - 1 ; w++) {
+								for (var w2 = 0; w2 <= width - 1 ; w2++) {
+									grid[Number(c+w)][Number(r+w2)] = 1;
+								}
+							}
+							placed = true;
+							break;
+						}
 					}
-				});
-				
-
-				// add to cols
-				for (c = 0; c <= width-1; c++) {
-					cols[lowest.key + c] += width;
+					r += 1;
 				}
 
-				/*var lowest = {};
-				var placed = false, c = 0;
-				while (placed != true) {
-					$.each(cols, function (key, value) {
-						if (lowest.value > value || lowest.value == null) {
-							lowest.value = value
-							lowest.key = key;
-						}
-					});
-
-				}*/
-
-				i.data('pr', lowest.key);
-				i.data('pd', lowest.value);
-				i.attr('pr', lowest.key);
-				i.attr('pd', lowest.value);
+				i.data('pr', push.col);
+				i.data('pd', push.row);
+				i.attr('data-ic', ic);
 
 				ic++;
 			});
-			console.log(cols);
 		}
 
 	};
