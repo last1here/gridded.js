@@ -21,24 +21,22 @@
 		var that = this;
 		this.element = element;
 		
-		this.options = $.extend({}, defaults, options);
-		console.log(this.options);
-		if(this.element.data('gridded'))
+		this.options = $.extend({}, defaults, options);		
+		if($.isPlainObject(this.element.data('gridded')))
 			this.options = $.extend({}, this.options, this.element.data('gridded'));
-		console.log(this.options);
-
+		
 		this.setWidths();
 		this.placeItems();
+
+		console.log(this);
 		
 		$(window).on('resize',function () {
 			that.setWidths();
 		});
-
 	};
 
 	gridded.prototype = {
 		constructor: gridded,
-
 
 		/* todo add delay on resize
 		resized: function  () {
@@ -51,7 +49,6 @@
 		},
 
 		placeItems: function () {
-
 			var that = this, ic = 1, largestPushDown = 0, grid = new Array([]);
 
 			// create grid
@@ -61,7 +58,7 @@
 
 			this.element.css("position", "relative");
 			this.element.find(this.options.items).hide().each(function() {
-				var i = $(this), placed = false, row = 0;
+				var i = $(this), placed = false, row = 0, pushCol, pushRow;
 
 				if (!i.data('w'))
 					i.data('w', 1);
@@ -75,14 +72,18 @@
 					for (var c = 0; c <= that.options.col - 1 ; c++) {
 						var empty = true;
 						for (var w = 0; w <= i.data('w') - 1 ; w++) {
-							var pushCol = Number(c+w), pushRow = Number(row+w);
-
-							if (pushCol < that.options.col) {
-								if(grid[pushCol][row] != null && grid[c][pushRow] != null) {
+							pushCol = Number(c+w);
+							for (var h = 0; h <= i.data('h') - 1 ; h++) {
+								pushRow = Number(row+h);
+								if (pushCol < that.options.col) {
+									if(grid[pushCol][pushRow] != null ) {
+										empty = false;
+									}
+								} else {
 									empty = false;
 								}
-							} else {
-								empty = false;
+								if(empty == false)
+									break;
 							}
 							if(empty == false)
 								break;
@@ -96,12 +97,10 @@
 							}
 
 							var itemWidth = i.data('w') * that.colWidth - that.options.gutter;
-							itemWidth -=  parseInt(i.css("border-left-width")) + parseInt(i.css("border-right-width"));
-							itemWidth -=  parseInt(i.css("padding-left")) + parseInt(i.css("padding-right"));
+							itemWidth -=  parseInt(i.css("border-left-width")) + parseInt(i.css("border-right-width")) + parseInt(i.css("padding-left")) + parseInt(i.css("padding-right"));
 
 							var itemHeight = i.data('h') * that.colWidth - that.options.gutter;
-							itemHeight -= parseInt(i.css("border-top-width")) + parseInt(i.css("border-bottom-width"));
-							itemHeight -= parseInt(i.css("padding-top")) + parseInt(i.css("padding-bottom"));
+							itemHeight -= parseInt(i.css("border-top-width")) + parseInt(i.css("border-bottom-width")) + parseInt(i.css("padding-top")) + parseInt(i.css("padding-bottom"));
 
 							i.data('pr', c).data('pd', row).data('data-ic', ic);
 							i.css("position", "absolute").width(itemWidth).height(itemHeight).css("left", c * that.colWidth + parseInt(that.element.css("padding-left"))).css("top", row * that.colWidth + parseInt(that.element.css("padding-top")));
@@ -125,6 +124,7 @@
 			});
 
 			this.element.css("height", largestPushDown * this.colWidth - this.options.gutter + parseInt(this.element.css('padding-top'))  + parseInt(this.element.css('padding-bottom')) );
+			this.grid = grid;
 		}
 
 	};
