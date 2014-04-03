@@ -7,12 +7,29 @@
  * https://github.com/last1here
  */
 !function ($) {
+
+	"use strict";
+
+	var defaults = {
+		gutter: 10,
+		col: 5,
+		items: '.item',
+		fadeIn: false
+	};
+
 	var gridded = function (element, options) {
-
+		var that = this;
 		this.element = element;
-		this.setOptions(options);
+		
+		this.options = $.extend({}, defaults, options);
+		console.log(this.options);
+		if(this.element.data('gridded'))
+			this.options = $.extend({}, this.options, this.element.data('gridded'));
+		console.log(this.options);
 
-		that = this;
+		this.setWidths();
+		this.placeItems();
+		
 		$(window).on('resize',function () {
 			that.setWidths();
 		});
@@ -22,35 +39,6 @@
 	gridded.prototype = {
 		constructor: gridded,
 
-		setOptions: function(options) {
-			this.gutter = 10;
-			this.col = 5;
-			this.items = '.item';
-			this.fadeIn = false;
-
-			if (typeof this.element.data('gut') == "number")
-				this.gutter = this.element.data('gut');
-
-			if (typeof this.element.data('col') == "number")
-				this.col = this.element.data('col');
-
-
-			if (typeof this.element.data('items') == "string")
-				this.items = this.element.data('items');
-
-			if (typeof options == 'object') {
-				if (typeof options.gutter == 'number')
-					this.gutter = options.gutter;
-
-				if (typeof options.col == 'number')
-					this.col = options.col;
-
-				if (typeof options.items == 'string')
-					this.items = options.items;
-			}
-
-			this.setWidths();
-		},
 
 		/* todo add delay on resize
 		resized: function  () {
@@ -58,44 +46,38 @@
 		},*/
 
 		setWidths: function () {
-			this.width = this.element.width() + this.gutter;
-			this.colWidth = this.width / this.col;
-
-			this.placeItems();
+			this.width = this.element.width() + this.options.gutter;
+			this.colWidth = this.width / this.options.col;
 		},
 
 		placeItems: function () {
-			var that = this;
-			largestPushDown = 0;
 
-			var that = this, rn = 0, cn = 0, ic = 1;
-			var grid = new Array([]);
+			var that = this, ic = 1, largestPushDown = 0, grid = new Array([]);
 
 			// create grid
-			for (var cl = this.col - 1; cl >= 0; cl--) {
+			for (var cl = this.options.col - 1; cl >= 0; cl--) {
 				grid[cl] = new Array();
 			}
 
 			this.element.css("position", "relative");
-			this.element.find(this.items).hide().each(function() {
-				var i = $(this), pos = {}, placed = false, row = 0;
+			this.element.find(this.options.items).hide().each(function() {
+				var i = $(this), placed = false, row = 0;
 
 				if (!i.data('w'))
 					i.data('w', 1);
-				else if (i.data('w') > that.col)
-					i.data('w', that.col);
+				else if (i.data('w') > that.options.col)
+					i.data('w', that.options.col);
 
 				if (!i.data('h'))
 					i.data('h', i.data('w'));
 
 				while (placed == false) {
-					for (var c = 0; c <= that.col - 1 ; c++) {
+					for (var c = 0; c <= that.options.col - 1 ; c++) {
 						var empty = true;
 						for (var w = 0; w <= i.data('w') - 1 ; w++) {
-							pushCol = Number(c+w);
-							pushRow = Number(row+w);
+							var pushCol = Number(c+w), pushRow = Number(row+w);
 
-							if (pushCol < that.col) {
+							if (pushCol < that.options.col) {
 								if(grid[pushCol][row] != null && grid[c][pushRow] != null) {
 									empty = false;
 								}
@@ -113,24 +95,18 @@
 								}
 							}
 
-							var itemWidth = i.data('w') * that.colWidth - that.gutter;
+							var itemWidth = i.data('w') * that.colWidth - that.options.gutter;
 							itemWidth -=  parseInt(i.css("border-left-width")) + parseInt(i.css("border-right-width"));
 							itemWidth -=  parseInt(i.css("padding-left")) + parseInt(i.css("padding-right"));
 
-							var itemHeight = i.data('h') * that.colWidth - that.gutter;
+							var itemHeight = i.data('h') * that.colWidth - that.options.gutter;
 							itemHeight -= parseInt(i.css("border-top-width")) + parseInt(i.css("border-bottom-width"));
 							itemHeight -= parseInt(i.css("padding-top")) + parseInt(i.css("padding-bottom"));
 
-							i.data('pr', c);
-							i.data('pd', row);
-							i.data('data-ic', ic);
-							i.css("position", "absolute");
-							i.width(itemWidth);
-							i.height(itemHeight);
-							i.css("left", c * that.colWidth + parseInt(that.element.css("padding-left")));
-							i.css("top", row * that.colWidth + parseInt(that.element.css("padding-top")));
+							i.data('pr', c).data('pd', row).data('data-ic', ic);
+							i.css("position", "absolute").width(itemWidth).height(itemHeight).css("left", c * that.colWidth + parseInt(that.element.css("padding-left"))).css("top", row * that.colWidth + parseInt(that.element.css("padding-top")));
 
-							if (that.fadeIn)
+							if (that.options.fadeIn)
 								i.delay(1000).fadeIn("slow");
 							else
 								i.show();
@@ -148,7 +124,7 @@
 				ic++;
 			});
 
-			this.element.css("height", largestPushDown * this.colWidth - this.gutter + parseInt(this.element.css('padding-top'))  + parseInt(this.element.css('padding-bottom')) );
+			this.element.css("height", largestPushDown * this.colWidth - this.options.gutter + parseInt(this.element.css('padding-top'))  + parseInt(this.element.css('padding-bottom')) );
 		}
 
 	};
