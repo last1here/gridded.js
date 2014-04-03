@@ -14,7 +14,8 @@
 		gutter: 10,
 		col: 5,
 		items: '.item',
-		fadeIn: false
+		fadeIn: false,
+		randomSize: false
 	};
 
 	var gridded = function (element, options) {
@@ -22,16 +23,17 @@
 		this.element = element;
 		
 		this.options = $.extend({}, defaults, options);		
-		if($.isPlainObject(this.element.data('gridded')))
+		if ($.isPlainObject(this.element.data('gridded')))
 			this.options = $.extend({}, this.options, this.element.data('gridded'));
-		
-		this.setWidths();
-		this.placeItems();
 
-		console.log(this);
+		if (this.options.randomSize)
+			this.setRandomWidths();
+
+		this.getWidths();
+		this.placeItems();
 		
 		$(window).on('resize',function () {
-			that.setWidths();
+			that.getWidths();
 		});
 	};
 
@@ -43,9 +45,23 @@
 			this.setWidths();
 		},*/
 
-		setWidths: function () {
+		getWidths: function () {
 			this.width = this.element.width() + this.options.gutter;
 			this.colWidth = this.width / this.options.col;
+		},
+
+		setRandomWidths: function () {
+			var that = this;
+			this.element.find(this.options.items).each(function() {
+				var i = $(this);
+				var max = Math.round(that.options.col/2);
+				var n = Math.floor(Math.random() * (max - 1 + 1) + 1);
+
+				if (!i.data('w') && !i.data('h')) {
+					i.data('w', n);
+					i.data('h', n);
+				}
+			});
 		},
 
 		placeItems: function () {
@@ -119,7 +135,6 @@
 					}
 					row += 1;
 				}
-
 				ic++;
 			});
 
