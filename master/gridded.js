@@ -15,7 +15,7 @@
 		numOfCols: 5,
 		items: '.item',
 		fadeIn: false,
-		randomSize: true,
+		randomSize: false,
 		breakPoints: {
 			mobile: 480,
 			tablet: 780
