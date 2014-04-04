@@ -34,7 +34,7 @@ $(function() {
 </div>
 ```
 
-
+## Options
 
 ## Todo's
 

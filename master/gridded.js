@@ -15,7 +15,7 @@
 		numOfCols: 5,
 		items: '.item',
 		fadeIn: false,
-		randomSize: false,
+		randomSize: true,
 		breakPoints: {
 			mobile: 480,
 			tablet: 780
@@ -25,18 +25,19 @@
 	var gridded = function (element, options) {
 		var that = this;
 		this.element = element;
+		this.window = $(window);
 
 		this.options = $.extend({}, defaults, options);
 		if ($.isPlainObject(this.element.data('gridded')))
 			this.options = $.extend({}, this.options, this.element.data('gridded'));
 
+		this.getWidths();
+
 		if (this.options.randomSize)
 			this.setRandomWidths();
-
-		this.getWidths();
 		this.placeItems();
 
-		$(window).on('resize',function () {
+		this.window.on('resize',function () {
 			that.getWidths();
 			that.placeItems();
 		});
@@ -51,11 +52,11 @@
 		},*/
 
 		getWidths: function () {
-			
+
 			if (typeof this.options.numOfCols == 'object') {
-				if ($(window).width() <= this.options.breakPoints.mobile && this.options.numOfCols.mobile) {
+				if (this.window.width() <= this.options.breakPoints.mobile && this.options.numOfCols.mobile) {
 					this.options.col = this.options.numOfCols.mobile;
-				} else if ($(window).width() <= this.options.breakPoints.tablet && this.options.numOfCols.tablet) {
+				} else if (this.window.width() <= this.options.breakPoints.tablet && this.options.numOfCols.tablet) {
 					this.options.col = this.options.numOfCols.tablet;
 				} else {
 					this.options.col = this.options.numOfCols.desktop;
@@ -64,20 +65,19 @@
 				this.options.col = this.options.numOfCols;
 			}
 
-			console.log(this.options.col);
-
 			this.width = this.element.width() + this.options.gutter;
 			this.colWidth = this.width / this.options.col;
 		},
 
 		setRandomWidths: function () {
 			var that = this;
+			console.log('rand');
 			this.element.find(this.options.items).each(function() {
-				var i = $(this);
+				var i = $(this), n = Math.floor(Math.random() * (Math.round(that.options.col/2) - 1 + 1) + 1);
 
 				if (!i.data('w') && !i.data('h')) {
-					i.data('w', Math.floor(Math.random() * (Math.round(that.options.col/2) - 1 + 1) + 1));
-					i.data('h', Math.floor(Math.random() * (Math.round(that.options.col/2) - 1 + 1) + 1));
+					i.data('w', n);
+					i.data('h', n);
 				}
 			});
 		},
