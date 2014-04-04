@@ -52,7 +52,6 @@
 		},*/
 
 		getWidths: function () {
-
 			if (typeof this.options.numOfCols == 'object') {
 				if (this.window.width() <= this.options.breakPoints.mobile && this.options.numOfCols.mobile) {
 					this.options.col = this.options.numOfCols.mobile;

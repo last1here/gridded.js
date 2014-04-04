@@ -36,6 +36,8 @@ $(function() {
 
 ## Options
 
+- `numOfCols`
+
 ## Todo's
 
 - better customisation
