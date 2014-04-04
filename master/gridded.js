@@ -12,17 +12,21 @@
 
 	var defaults = {
 		gutter: 10,
-		col: 5,
+		numOfCols: 5,
 		items: '.item',
 		fadeIn: false,
-		randomSize: false
+		randomSize: false,
+		breakPoints: {
+			mobile: 480,
+			tablet: 780
+		}
 	};
 
 	var gridded = function (element, options) {
 		var that = this;
 		this.element = element;
-		
-		this.options = $.extend({}, defaults, options);		
+
+		this.options = $.extend({}, defaults, options);
 		if ($.isPlainObject(this.element.data('gridded')))
 			this.options = $.extend({}, this.options, this.element.data('gridded'));
 
@@ -31,9 +35,10 @@
 
 		this.getWidths();
 		this.placeItems();
-		
+
 		$(window).on('resize',function () {
 			that.getWidths();
+			that.placeItems();
 		});
 	};
 
@@ -46,6 +51,21 @@
 		},*/
 
 		getWidths: function () {
+			
+			if (typeof this.options.numOfCols == 'object') {
+				if ($(window).width() <= this.options.breakPoints.mobile && this.options.numOfCols.mobile) {
+					this.options.col = this.options.numOfCols.mobile;
+				} else if ($(window).width() <= this.options.breakPoints.tablet && this.options.numOfCols.tablet) {
+					this.options.col = this.options.numOfCols.tablet;
+				} else {
+					this.options.col = this.options.numOfCols.desktop;
+				}
+			} else {
+				this.options.col = this.options.numOfCols;
+			}
+
+			console.log(this.options.col);
+
 			this.width = this.element.width() + this.options.gutter;
 			this.colWidth = this.width / this.options.col;
 		},
@@ -54,12 +74,10 @@
 			var that = this;
 			this.element.find(this.options.items).each(function() {
 				var i = $(this);
-				var max = Math.round(that.options.col/2);
-				var n = Math.floor(Math.random() * (max - 1 + 1) + 1);
 
 				if (!i.data('w') && !i.data('h')) {
-					i.data('w', n);
-					i.data('h', n);
+					i.data('w', Math.floor(Math.random() * (Math.round(that.options.col/2) - 1 + 1) + 1));
+					i.data('h', Math.floor(Math.random() * (Math.round(that.options.col/2) - 1 + 1) + 1));
 				}
 			});
 		},
@@ -141,7 +159,6 @@
 			this.element.css("height", largestPushDown * this.colWidth - this.options.gutter + parseInt(this.element.css('padding-top'))  + parseInt(this.element.css('padding-bottom')) );
 			this.grid = grid;
 		}
-
 	};
 
 	// jQuery fn
