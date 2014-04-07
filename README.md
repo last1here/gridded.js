@@ -40,4 +40,10 @@ $(function() {
 
 ## Todo's
 
-- better customisation
+- Allow to set predefined sizes to choose from
+```Javascript
+{
+  sizes: array(1=>2, 3=>33) 
+}
+```
+key being width value being height
