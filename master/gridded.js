@@ -87,26 +87,28 @@
 			// create grid
 			for (var cl = this.options.col - 1; cl >= 0; cl--) {
 				grid[cl] = new Array();
-			}
+			} 
 
 			this.element.css("position", "relative");
 			this.element.find(this.options.items).hide().each(function() {
-				var i = $(this), placed = false, row = 0, pushCol, pushRow;
+				var i = $(this), placed = false, row = 0, pushCol, pushRow, dataW = i.data('w'), dataH = i.data('h');
 
-				if (!i.data('w'))
-					i.data('w', 1);
-				else if (i.data('w') > that.options.col)
-					i.data('w', that.options.col);
+				if (!dataW) {
+					dataW = 1;
+				} else if (dataW > that.options.col) {
+					dataW = that.options.col;
+					// needs to re-adjust height in correct porportion dataH/(dataW/that.options.col) ish
+				}
 
-				if (!i.data('h'))
-					i.data('h', i.data('w'));
+				if (!dataH) 
+					dataH = dataW;
 
 				while (placed == false) {
 					for (var c = 0; c <= that.options.col - 1 ; c++) {
 						var empty = true;
-						for (var w = 0; w <= i.data('w') - 1 ; w++) {
+						for (var w = 0; w <= dataW - 1 ; w++) {
 							pushCol = Number(c+w);
-							for (var h = 0; h <= i.data('h') - 1 ; h++) {
+							for (var h = 0; h <= dataH - 1 ; h++) {
 								pushRow = Number(row+h);
 								if (pushCol < that.options.col) {
 									if(grid[pushCol][pushRow] != null ) {
@@ -123,16 +125,16 @@
 						}
 
 						if(empty == true) {
-							for (var w = 0; w <= i.data('w') - 1 ; w++) {
-								for (var h = 0; h <= i.data('h') - 1 ; h++) {
+							for (var w = 0; w <= dataW - 1 ; w++) {
+								for (var h = 0; h <= dataH - 1 ; h++) {
 									grid[Number(c+w)][Number(row + h)] = 1;
 								}
 							}
 
-							var itemWidth = i.data('w') * that.colWidth - that.options.gutter;
+							var itemWidth = dataW * that.colWidth - that.options.gutter;
 							itemWidth -=  parseInt(i.css("border-left-width")) + parseInt(i.css("border-right-width")) + parseInt(i.css("padding-left")) + parseInt(i.css("padding-right"));
 
-							var itemHeight = i.data('h') * that.colWidth - that.options.gutter;
+							var itemHeight = dataH * that.colWidth - that.options.gutter;
 							itemHeight -= parseInt(i.css("border-top-width")) + parseInt(i.css("border-bottom-width")) + parseInt(i.css("padding-top")) + parseInt(i.css("padding-bottom"));
 
 							i.data('pr', c).data('pd', row).data('data-ic', ic);
@@ -143,8 +145,8 @@
 							else
 								i.show();
 
-							if(largestPushDown < (row + i.data('h')))
-								largestPushDown = row + Number(i.data('h'));
+							if(largestPushDown < (row + dataH))
+								largestPushDown = row + Number(dataH);
 
 							placed = true;
 							break;
