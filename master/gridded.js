@@ -46,11 +46,6 @@
 	gridded.prototype = {
 		constructor: gridded,
 
-		/* todo add delay on resize
-		resized: function  () {
-			this.setWidths();
-		},*/
-
 		getWidths: function () {
 			if (typeof this.options.numOfCols == 'object') {
 				if (this.window.width() <= this.options.breakPoints.mobile && this.options.numOfCols.mobile) {
@@ -84,7 +79,6 @@
 		placeItems: function () {
 			var that = this, ic = 1, largestPushDown = 0, grid = new Array([]);
 
-			// create grid
 			for (var cl = this.options.col - 1; cl >= 0; cl--) {
 				grid[cl] = new Array();
 			}
