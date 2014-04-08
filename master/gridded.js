@@ -87,7 +87,7 @@
 			// create grid
 			for (var cl = this.options.col - 1; cl >= 0; cl--) {
 				grid[cl] = new Array();
-			} 
+			}
 
 			this.element.css("position", "relative");
 			this.element.find(this.options.items).hide().each(function() {
@@ -96,11 +96,11 @@
 				if (!dataW) {
 					dataW = 1;
 				} else if (dataW > that.options.col) {
+					dataH = Math.round(dataH / (dataW/that.options.col));
 					dataW = that.options.col;
-					// needs to re-adjust height in correct porportion dataH/(dataW/that.options.col) ish
 				}
 
-				if (!dataH) 
+				if (!dataH)
 					dataH = dataW;
 
 				while (placed == false) {
@@ -108,17 +108,16 @@
 						var empty = true;
 						for (var w = 0; w <= dataW - 1 ; w++) {
 							pushCol = Number(c+w);
-							for (var h = 0; h <= dataH - 1 ; h++) {
-								pushRow = Number(row+h);
-								if (pushCol < that.options.col) {
+							if (pushCol < that.options.col) {
+								for (var h = 0; h <= dataH - 1 ; h++) {
+									pushRow = Number(row+h);
 									if(grid[pushCol][pushRow] != null ) {
 										empty = false;
+										break;
 									}
-								} else {
-									empty = false;
 								}
-								if(empty == false)
-									break;
+							} else {
+								empty = false;
 							}
 							if(empty == false)
 								break;
