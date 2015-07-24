@@ -1,4 +1,4 @@
-#Gridded
+#gridded.js
 
 
 A simple jQuery tile based grid.
