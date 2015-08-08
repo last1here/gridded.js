@@ -1,0 +1,13 @@
+{
+  "name": "gridded.js",
+  "version": "0.0.2",
+  "description": "Simple responsive tile based grid system.",
+  "author": "Ashley Burgess",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-copy": "^0.8.0",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-contrib-uglify": "^0.9.1",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}
