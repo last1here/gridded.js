@@ -1,6 +1,6 @@
 {
   "name": "gridded.js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Simple responsive tile based grid system.",
   "author": "Ashley Burgess",
   "devDependencies": {

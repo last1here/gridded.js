@@ -7,7 +7,7 @@ module.exports = function( grunt ) {
     grunt.initConfig({
         pkg: pkg,
 
-        banner: '/*! <%= pkg.name %> - v<%= pkg.version %> | <%= pkg.author %> */',
+        banner: '/*! <%= pkg.name %> - v<%= pkg.version %> | <%= pkg.author %> | MIT license */',
 
         jshint: {
             files: {
