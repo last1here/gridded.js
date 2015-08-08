@@ -3,7 +3,7 @@
  * A lightweight jQuery plugin to create a tile based grid.
  *
  * Licensed under the MIT license.
- * Copyright 2013 Ashley Burgess
+ * Ashley Burgess - me@ashleyburg.es
  * https://github.com/last1here
  */
 !function ($) {
